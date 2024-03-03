@@ -1,63 +1,171 @@
-
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Comparator;
+
 /**
  * Author: Candy Torres
  * Course: Software Development I - CEN 3024C
- * Date: Jan 28 2024
+ * Date: March 3, 2024
  * Class Name: LibraryManagementSystem
- * Description:Main class that contains the entry point for the LMS.
- * Class demonstrates the functionality of the LMS.
- * Including adding, removing, and listing books.
-*/
+ * Description: This class represents the main entry point for the Library Management System (LMS) application.
+ *              It allows users to interact with the library database by adding, removing,
+ *              checking out, and checking in books.
+ */
 
 public class LibraryManagementSystem {
-    /**
-     * Method: main
-     * Purpose: Entry point of the program. Demonstrates LMS functionality.
-     * Arguments: String[] args command-line arguments is not used.
-     * Return Value: void
-     */
-    public static void main(String[] args) {
 
-        Library library = new Library();
+    /**
+     * Main method to start the Library Management System application.
+     * @param args Command-line arguments.
+     */
+
+    public static void main(String[] args) {
+        Library library = new Library("books.txt"); // Create a Library object with a database file name
         Scanner scanner = new Scanner(System.in);
 
-        // adding initial books
-        library.addBook(new Book (1, "To kill a Mockingbird", "Harper Lee"));
-        library.addBook(new Book (2, "1984", "George Orwell"));
-        library.addBook (new Book (3, "The Great Gatsby" , "F. Scott Fitzgerald" ));
+        // Load books from file on startup
+        library.loadBooksFromFile("books.txt");
+
+        // Add shutdown hook to save to file when program exits
+        Runtime.getRuntime().addShutdownHook(new Thread(library::saveBooksToFile));
 
         boolean active = true;
-
         while (active) {
-            System.out.print("Make a selection \n 1. Add a book \n 2. Remove a Book \n 3. List current books \n 4. To exit\n ");
+            displayMenu();
+            System.out.print("Enter your selection: ");
             int userSelection = scanner.nextInt();
+            scanner.nextLine(); // consume newline
 
-            if (userSelection == 1) {
-                System.out.print("Please enter a book ID: ");
-                int bookId = scanner.nextInt();
-                scanner.nextLine();
-                System.out.print("Please enter a book title: ");
-                String bookTitle = scanner.nextLine();
-                System.out.print("Please enter the book Author: ");
-                String bookAuthor = scanner.nextLine();
-
-                library.addBook(new Book(bookId, bookTitle, bookAuthor));
-
-            } else if (userSelection == 2) {
-                System.out.print("Enter the ID of he book to remove: ");
-                int removeID = scanner.nextInt();
-                library.removeBook(removeID);
-            } else if (userSelection == 3) {
-                System.out.println("List of all books: ");
-                library.listAllBooks();
-            } else if (userSelection == 4) {
-                active = false;
-                System.out.println("Exiting the program.");
-            } else{
-                System.out.println("Invalid input, please try again");
+            switch (userSelection) {
+                case 1:
+                    addBook(scanner, library);
+                    break;
+                case 2:
+                    removeBookByBarcode(scanner, library);
+                    break;
+                case 3:
+                    removeBookByTitle(scanner, library);
+                    break;
+                case 4:
+                    checkOutBook(scanner, library);
+                    break;
+                case 5:
+                    checkInBook(scanner, library);
+                    break;
+                case 6:
+                    displayDatabase(library);
+                    break;
+                case 7:
+                    active = false;
+                    System.out.println("Exiting the program");
+                    break;
+                default:
+                    System.out.println("Invalid input, please try again");
             }
+
+            System.out.println(); // this is to add  an empty line after each selection (visual purposes)
         }
         scanner.close();
+    }
+
+    /**
+     * Display the main menu of the Library Management System.
+     */
+    private static void displayMenu() {
+        System.out.println("""
+            Make a selection
+            1. Add a book
+            2. Remove a book by barcode
+            3. Remove a book by title
+            4. Check out a book
+            5. Check in a book
+            6. Display the Contents of the Database
+            7. Exit
+            """);
+    }
+
+    /**
+     * Add a book to the library database.
+     * @param scanner Scanner object for user input.
+     * @param library Library object that represents  the library database.
+     */
+    private static void addBook(Scanner scanner, Library library) {
+        System.out.println("Please enter book ID: ");
+        int bookID = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        System.out.println("Please enter book title: ");
+        String bookTitle = scanner.nextLine();
+
+        System.out.println("Please enter the book Author: ");
+        String bookAuthor = scanner.nextLine();
+
+        System.out.println("Please enter the book Barcode: ");
+        String bookBarcode = scanner.nextLine(); // Assuming barcode is supplied by the user
+
+        library.addBook(new Book(bookID, bookTitle, bookAuthor, bookBarcode, true, null, null));
+    }
+
+    /**
+     * Remove a book from the library database by its barcode.
+     * @param scanner Scanner object for user input.
+     * @param library Library object representing the library database.
+     */
+    private static void removeBookByBarcode(Scanner scanner, Library library) {
+        System.out.println("Enter the barcode of the book to remove: ");
+        String removeBarcode = scanner.nextLine();
+        library.removeBookByBarcode(removeBarcode);
+    }
+
+    /**
+     * Remove a book from the library database by its title.
+     * @param scanner Scanner object for user input.
+     * @param library Library object representing the library database.
+     */
+    private static void removeBookByTitle(Scanner scanner, Library library) {
+        System.out.println("Enter the title of the book to remove: ");
+        String removeTitle = scanner.nextLine();
+        library.removeBookByTitle(removeTitle);
+    }
+
+    /**
+     * Check out a book from the library database by its title.
+     * @param scanner Scanner object for user input.
+     * @param library Library object representing the library database.
+     */
+    private static void checkOutBook(Scanner scanner, Library library) {
+        System.out.println("Enter the title of the book to check out: ");
+        String checkoutTitle = scanner.nextLine();
+        Book checkedOutBook = library.checkOutBook(checkoutTitle);
+        if (checkedOutBook != null) {
+            // Print necessary information here
+            System.out.println("Book '" + checkoutTitle + "' checked out successfully:");
+            System.out.println(checkedOutBook);
+            System.out.println("Checkout Date: " + checkedOutBook.getCheckoutDate());
+            System.out.println("Due Date: " + checkedOutBook.getDueDate());
+        }
+    }
+    /**
+     * Check in a book to the library database by its title.
+     * @param scanner Scanner object for user input.
+     * @param library Library object representing the library database.
+     */
+    private static void checkInBook(Scanner scanner, Library library) {
+        System.out.println("Enter the title of the book to check in: ");
+        String checkInTitle = scanner.nextLine();
+        library.checkInBook(checkInTitle);
+    }
+
+    /**
+     * Display the contents of the library database in ascending order by book ID.
+     * @param library Library object representing the library database.
+     */
+    private static void displayDatabase(Library library) {
+        System.out.println("Displaying contents of the database in ascending order by book ID:");
+        ArrayList<Book> sortedBooks = library.getBooks();
+        sortedBooks.sort(Comparator.comparingInt(Book::getId));
+        for (Book book : sortedBooks) {
+            System.out.println(book);
+        }
     }
 }
