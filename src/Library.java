@@ -3,8 +3,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.time.format.DateTimeFormatter;
 
-/**
+/*
  * Author: Candy Torres
  * Course: Software Development I - CEN 3024C
  * Date: March 3, 2024
@@ -17,13 +18,15 @@ public class Library {
     private final ArrayList<Book> books;
     private final String fileName;
 
-    /**
+    /*
      * Constructor for the Library class.
      * @param fileName The name of the file containing book data.
      */
     public Library(String fileName) {
+        // load books from the file
         this.books = new ArrayList<>();
         this.fileName = fileName;
+        loadBooksFromFile(fileName); // Call instance method to load books from file
     }
 
     /**
@@ -34,13 +37,13 @@ public class Library {
         books.add(book); // Add the book to the list
         saveBooksToFile(); // Save the updated list to the file
     }
-
     /**
      * Method to add books from a file to the library.
      * @param filePath The path of the file containing book data.
      */
     public void addBooksFromFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -52,7 +55,8 @@ public class Library {
                     boolean available = Boolean.parseBoolean(parts[4]);
                     try {
                         LocalDate dueDate = LocalDate.parse(parts[5]);
-                        books.add(new Book(bookID, title, author, barcode, available, dueDate, null));
+                        Book book = new Book(bookID, title, author, barcode, available, dueDate, null);
+                        books.add(book);
                     } catch (DateTimeParseException e) {
                         System.out.println("Error parsing due date for book: " + title);
                     }
@@ -65,6 +69,7 @@ public class Library {
             System.out.println("Error adding books from file: " + e.getMessage());
         }
     }
+
 
     /**
      * Method to remove a book from the library by its barcode.
@@ -142,6 +147,10 @@ public class Library {
      * @param fileName The name of the file containing book data.
      */
     public void loadBooksFromFile(String fileName) {
+        // Define the date format expected in the file
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             books.clear(); // Clear existing books before loading from file
             String line;
@@ -154,7 +163,7 @@ public class Library {
                     String barcode = parts[3];
                     boolean available = Boolean.parseBoolean(parts[4]);
                     try {
-                        LocalDate dueDate = LocalDate.parse(parts[5]);
+                        LocalDate dueDate = LocalDate.parse(parts[5], formatter); // Use formatter
                         books.add(new Book(bookID, title, author, barcode, available, dueDate, null));
                     } catch (DateTimeParseException e) {
                         System.out.println("Error parsing due date for book: " + title);
@@ -195,14 +204,13 @@ public class Library {
             book.setCheckoutDate(LocalDate.now());
             LocalDate dueDate = calculateDueDate(book.getCheckoutDate()); // Calculate due date
             book.setDueDate(dueDate); // Set due date
-            saveBooksToFile(); // Save changes to file after checking out a book
-            return book;
+            return book; // Return the checked-out book
         } else if (book != null) {
             System.out.println("Book '" + title + "' is not available for checkout.");
         } else {
             System.out.println("Book '" + title + "' not found.");
         }
-        return null;
+        return null; // Return null if the book is not available for checkout or not found
     }
 
     /**
