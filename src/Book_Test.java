@@ -37,7 +37,7 @@ class BookTest {
         assertTrue(booksInDatabase.stream().anyMatch(book -> book.getTitle().equals("Divergent")));
 
         // Print message for added book
-        System.out.println("Book 'Divergent, by Veronica Roth' has been added.");
+        System.out.println("Book 'Divergent by Veronica Roth' has been added.");
 
         // Line separator
         System.out.println("----------------------------------");
@@ -81,7 +81,7 @@ class BookTest {
         // Remove a book by title
         library.removeBookByTitle("The Great Gatsby");
 
-        // Check if the book is removed from the database
+        // Check if the book is removed from the LMS database
         assertFalse(library.getBooks().stream().anyMatch(book -> book.getTitle().equals("The Great Gatsby")));
 
         // Line separator

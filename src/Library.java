@@ -152,9 +152,9 @@ public class Library {
 
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            books.clear(); // Clear existing books before loading from file
+            books.clear(); // clear existing books before loading file
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null){
                 String[] parts = line.split(",");
                 if (parts.length >= 6) {
                     int bookID = Integer.parseInt(parts[0]);
@@ -162,13 +162,14 @@ public class Library {
                     String author = parts[2];
                     String barcode = parts[3];
                     boolean available = Boolean.parseBoolean(parts[4]);
-                    try {
-                        LocalDate dueDate = LocalDate.parse(parts[5], formatter); // Use formatter
-                        books.add(new Book(bookID, title, author, barcode, available, dueDate, null));
-                    } catch (DateTimeParseException e) {
-                        System.out.println("Error parsing due date for book: " + title);
+                    LocalDate dueDate;
+                    if (!available) {
+                        dueDate = LocalDate.parse(parts[5], formatter); // use formatter
+                    } else {
+                        dueDate = null;
                     }
-                } else {
+                    books.add(new Book(bookID, title, author, barcode, available, dueDate, null));
+                } else  {
                     System.out.println("Invalid book entry: " + line);
                 }
             }
