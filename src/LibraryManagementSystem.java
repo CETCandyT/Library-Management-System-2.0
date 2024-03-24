@@ -5,7 +5,7 @@ import java.util.Comparator;
 /**
  * Author: Candy Torres
  * Course: Software Development I - CEN 3024C
- * Date: March 3, 2024
+ * Date: March 24, 2024.
  * Class Name: LibraryManagementSystem
  * Description: This class represents the main entry point for the Library Management System (LMS) application.
  *              It allows users to interact with the library database by adding, removing,
@@ -13,6 +13,7 @@ import java.util.Comparator;
  */
 
 public class LibraryManagementSystem {
+
 
     /**
      * Main method to start the Library Management System application.
@@ -89,7 +90,8 @@ public class LibraryManagementSystem {
      * @param scanner Scanner object for user input.
      * @param library Library object that represents  the library database.
      */
-    private static void addBook(Scanner scanner, Library library) {
+    public static void addBook(Scanner scanner, Library library) {
+
         System.out.println("Please enter book ID: ");
         int bookID = scanner.nextInt();
         scanner.nextLine(); // consume newline

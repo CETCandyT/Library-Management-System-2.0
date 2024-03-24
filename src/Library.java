@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 /*
  * Author: Candy Torres
  * Course: Software Development I - CEN 3024C
- * Date: March 3, 2024
+ * Date: March 24, 2024
  * Class Name: Library
  * Description: Manages the library system, including adding,
  * removing, listing, and checking in/out books.
@@ -70,7 +70,6 @@ public class Library {
         }
     }
 
-
     /**
      * Method to remove a book from the library by its barcode.
      * @param barcode The barcode of the book to be removed.
@@ -97,7 +96,7 @@ public class Library {
         Iterator<Book> iterator = books.iterator();
         while (iterator.hasNext()) {
             Book book = iterator.next();
-            if (book.getTitle().equals(title)) {
+            if (book.getTitle().equals(title)) { // Compare the book's title with the input title
                 iterator.remove();
                 System.out.println("Book with title '" + title + "' has been removed.");
                 saveBooksToFile(); // Save changes to file after removing a book
@@ -106,6 +105,7 @@ public class Library {
         }
         System.out.println("Book with title '" + title + "' not found.");
     }
+
 
     /**
      * Method to display all books in the library.
@@ -126,6 +126,7 @@ public class Library {
             System.out.println(book);
         }
     }
+
 
     /**
      * Method to save the books to a file.
