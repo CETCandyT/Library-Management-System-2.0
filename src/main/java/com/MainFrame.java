@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Iterator;
 import java.io.File;
 
+
 /* Author: Candy Torres
  * Course: Software Development I - CEN 3024C
  * Due Date: March 24, 2024.
@@ -63,13 +64,13 @@ public class MainFrame extends JFrame {
 
         // Add button panel to main panel
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
-        // Add main panel to frame
+        //  main panel to frame
         add(mainPanel);
         // Set frame size
         setSize(400, 400);
         setLocationRelativeTo(null); // Center the frame on the screen
 
-        // Add action listeners
+        // action listeners
         addButton.addActionListener(_ -> navigateToAddBookPage());
         importBooksButton.addActionListener(_ -> importBooks());
         removeByBarcodeButton.addActionListener(_ -> navigateToRemoveByBarcodePage());

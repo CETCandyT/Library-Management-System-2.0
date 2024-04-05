@@ -2,11 +2,12 @@ package JDBC;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 import java.time.LocalDate;
 import java.sql.Date;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /*
  * Author: Candy Torres
@@ -18,8 +19,9 @@ import java.sql.Date;
  * checking books in/out, upload books from a txt file, and database display.
  */
 public class JDBC_GUI extends JFrame {
-    // Database URL
-    private static final String DB_URL = "jdbc:sqlite:C:\\Users\\Candy\\Desktop\\SQL Database\\LMSlibrary\\books.db";
+   // database URL
+    private static final String DB_URL = "jdbc:sqlite:/Users/Candy/Desktop/sqlite/LMSlibrary.db";
+
     private Connection connection;
     private Statement statement;
     private JLabel outputLabel;
@@ -33,15 +35,15 @@ public class JDBC_GUI extends JFrame {
         setLocationRelativeTo(null);
 
         // Set font and alignment for title
-        Font titleFont = new Font("Arial", Font.BOLD, 24); // Choose your desired font and size
+        Font titleFont = new Font("Arial", Font.BOLD, 20);
         getRootPane().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        JLabel titleLabel = new JLabel("Library Management System", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("Please Make a selection", JLabel.CENTER);
         titleLabel.setFont(titleFont);
 
         // Initialize components
         outputLabel = new JLabel("Please make a selection");
         outputLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center align the text
-        outputLabel.setFont(outputLabel.getFont().deriveFont(Font.BOLD, 20f)); // Increase font size and make it bold
+        outputLabel.setFont(outputLabel.getFont().deriveFont(Font.BOLD, 14f)); // Increase font size and make it bold
         JPanel buttonPanel = new JPanel(new GridLayout(0, 1, 0, 10));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -99,7 +101,6 @@ public class JDBC_GUI extends JFrame {
         revalidate();
         repaint();
     }
-
     /**
      * Remove books from SQL database
      */
@@ -122,7 +123,6 @@ public class JDBC_GUI extends JFrame {
             }
         }
     }
-
     /**
      * Check out a book
      * User is able to check out a book from the SQL database by title.
@@ -156,7 +156,9 @@ public class JDBC_GUI extends JFrame {
                     // Execute the update statement
                     int rowsUpdated = updateStatement.executeUpdate();
                     if (rowsUpdated > 0) {
-                        JOptionPane.showMessageDialog(null, "Book '" + title + "' checked out successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        // Construct message with due date
+                        String message = "Book '" + title + "' checked out successfully. Due date: " + dueDate.toString();
+                        JOptionPane.showMessageDialog(null, message, "Success", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(null, "Failed to check out the book.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -169,6 +171,7 @@ public class JDBC_GUI extends JFrame {
             }
         }
     }
+
 
     /**
      * Check in a book
