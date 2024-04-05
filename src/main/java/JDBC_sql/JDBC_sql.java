@@ -1,4 +1,4 @@
-package JDBC;
+package JDBC_sql;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ import java.sql.SQLException;
  * This page provides access to various functions such as adding, removing,
  * checking books in/out, upload books from a txt file, and database display.
  */
-public class JDBC_GUI extends JFrame {
+class JDBC_sql extends JFrame {
    // database URL
     private static final String DB_URL = "jdbc:sqlite:/Users/Candy/Desktop/sqlite/LMSlibrary.db";
 
@@ -26,7 +26,7 @@ public class JDBC_GUI extends JFrame {
     private Statement statement;
     private JLabel outputLabel;
 
-    public JDBC_GUI() {
+    public JDBC_sql() {
 
         // Frame setup
         setTitle("Library Management System");
@@ -84,11 +84,11 @@ public class JDBC_GUI extends JFrame {
         exitButton.setFont(buttonFont);
 
         // Add action listeners for buttons
-        displayButton.addActionListener(e -> displayDatabase());
-        removeButton.addActionListener(e -> removeBook());
-        checkOutButton.addActionListener(e -> checkOutBook());
-        checkInButton.addActionListener(e -> checkInBook());
-        exitButton.addActionListener(e -> exitApplication());
+        displayButton.addActionListener(_ -> displayDatabase());
+        removeButton.addActionListener(_ -> removeBook());
+        checkOutButton.addActionListener(_ -> checkOutBook());
+        checkInButton.addActionListener(_ -> checkInBook());
+        exitButton.addActionListener(_ -> exitApplication());
 
         // Add buttons to panel
         buttonPanel.add(displayButton);
@@ -252,6 +252,6 @@ public class JDBC_GUI extends JFrame {
 
     // Main method
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new JDBC_GUI().setVisible(true));
+        SwingUtilities.invokeLater(() -> new JDBC_sql().setVisible(true));
     }
 }
